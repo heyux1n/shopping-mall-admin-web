@@ -87,8 +87,8 @@ export default defineComponent({
 
     // 退出
     const logout = async () => {
-      const { code ,  data , message } = await Logout() ;
-      if(code == 200) {
+      const { code, data, message } = await Logout()
+      if (code == 200) {
         // 清除token
         useApp().clearToken()
         router.push('/login')

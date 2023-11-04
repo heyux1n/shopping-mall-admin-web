@@ -47,15 +47,10 @@ module.exports = {
   rules: {
     'no-console': 0,
     'no-use-before-define': 'off',
-    'no-unused-vars': [
-      'warn',
-      {
-        // 允许声明未使用变量
-        vars: 'local',
-        // 参数不检查
-        args: 'none',
-      },
-    ],
+    'no-unused-vars':['error', {
+      varsIgnorePattern: '.*',
+      args: 'none'
+    }],
     'vue/no-unused-vars': 'warn',
     'no-prototype-builtins': 'off',
     'no-irregular-whitespace': 'off',

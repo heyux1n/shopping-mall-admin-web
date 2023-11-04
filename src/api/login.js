@@ -27,7 +27,6 @@ export const GetCaptcha = () => {
   })
 }
 
-
 // 获取登录用户信息
 export const GetUserinfo = () => {
   return request({
@@ -39,7 +38,7 @@ export const GetUserinfo = () => {
 // 退出功能
 export const Logout = () => {
   return request({
-      url: '/admin/system/index/logout',
-      method: 'get',
+    url: '/admin/system/index/logout',
+    method: 'get',
   })
 }

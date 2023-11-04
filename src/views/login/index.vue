@@ -34,15 +34,15 @@
       </el-form-item>
 
       <el-form-item prop="captcha">
-          <div class="captcha">
-              <el-input
-                        class="text"
-                        v-model="model.captcha"
-                        prefix-icon="Picture"
-                        placeholder="请输入验证码"
-                        ></el-input>
-              <img :src="captchaSrc" @click="refreshCaptcha" />
-          </div>
+        <div class="captcha">
+          <el-input
+            class="text"
+            v-model="model.captcha"
+            prefix-icon="Picture"
+            placeholder="请输入验证码"
+          ></el-input>
+          <img :src="captchaSrc" @click="refreshCaptcha" />
+        </div>
       </el-form-item>
 
       <el-form-item>
@@ -114,9 +114,9 @@ export default defineComponent({
       ],
       captcha: [
         {
-            required: true,
-            message: ctx.$t('login.rules-validate-code'),
-            trigger: 'blur',
+          required: true,
+          message: ctx.$t('login.rules-validate-code'),
+          trigger: 'blur',
         },
       ],
     })
@@ -130,7 +130,7 @@ export default defineComponent({
       model: {
         userName: '',
         password: '',
-        captcha: ""
+        captcha: '',
       },
       captchaSrc: undefined,
       rules: getRules(),
@@ -140,9 +140,9 @@ export default defineComponent({
       ),
       loginForm: ref(null),
       refreshCaptcha: async () => {
-          const { data } = await GetCaptcha() ;
-          state.model.codeKey = data.codeKey
-          state.captchaSrc = data.codeValue
+        const { data } = await GetCaptcha()
+        state.model.codeKey = data.codeKey
+        state.captchaSrc = data.codeValue
       },
       submit: () => {
         if (state.loading) {
@@ -170,7 +170,7 @@ export default defineComponent({
               }
               useApp().initToken(data)
             } else {
-              if(code != 202) {
+              if (code != 202) {
                 state.refreshCaptcha()
               }
               ctx.$message.error(message)

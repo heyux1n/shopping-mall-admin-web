@@ -32,11 +32,12 @@ import error from './modules/error'
 import login from './modules/login'
 import lock from './modules/lock'
 import home from './modules/home'
+import system from './modules/system'
 import test from './modules/test'
 
 /* 菜单栏的路由 */
 // 固定菜单
-export const fixedRoutes = [...home]
+export const fixedRoutes = [...home, ...system]
 // 动态菜单
 export const asyncRoutes = [...test]
 
