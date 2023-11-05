@@ -19,7 +19,7 @@
 
     <!-- 添加按钮 -->
     <div class="tools-div">
-      <el-button type="success" size="small" @click="addShow">
+      <el-button type="success" size="small" @click="showAdd">
         添 加
       </el-button>
     </div>
@@ -30,7 +30,7 @@
       <el-table-column prop="roleCode" label="角色code" width="180" />
       <el-table-column prop="createTime" label="创建时间" />
       <el-table-column label="操作" width="280" #default="scope">
-        <el-button type="primary" size="small" @click="updateShow(scope.row)">
+        <el-button type="primary" size="small" @click="showUpdate(scope.row)">
           修改
         </el-button>
         <el-button type="danger" size="small" @click="delteRole(scope.row.id)">
@@ -135,12 +135,12 @@ const formSubmit = async () => {
   }
 }
 
-const addShow = () => {
+const showAdd = () => {
   roleForm.value = {}
   dialogVisible.value = true
 }
 
-const updateShow = row => {
+const showUpdate = row => {
   roleForm.value = row
   dialogVisible.value = true
 }
@@ -165,7 +165,7 @@ const updateRole = async () => {
   }
 }
 
-//添加
+//删除
 const delteRole = async id => {
   ElMessageBox.confirm('此操作将永久删除该记录, 是否继续?', 'Warning', {
     confirmButtonText: '确定',

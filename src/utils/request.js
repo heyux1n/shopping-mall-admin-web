@@ -40,12 +40,19 @@ const service = axios.create({
   withCredentials: true,
 })
 
+export const getBearerToken = () => {
+  const { authorization } = useApp()
+  if (authorization) {
+    return `Bearer ${authorization.token}`
+  }
+}
+
 // 拦截请求
 service.interceptors.request.use(
   config => {
-    const { authorization } = useApp()
-    if (authorization) {
-      config.headers.Authorization = `Bearer ${authorization.token}`
+    let bearerToken = getBearerToken()
+    if (bearerToken) {
+      config.headers.Authorization = bearerToken
     }
     return config
   },
