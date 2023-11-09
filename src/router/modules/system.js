@@ -33,7 +33,7 @@ export default [
         hidden: false,
       },
       {
-        path: '/menu',
+        path: '/sysMenu',
         name: 'sysMenu',
         component: sysMenu,
         meta: {
