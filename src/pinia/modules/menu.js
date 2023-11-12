@@ -24,23 +24,19 @@ export const useMenus = defineStore('menu', () => {
       : parentPath
   }
 
-  const getFilterRoutes = (targetRoutes, ajaxRoutes) => {
+  const getFilterRoutes = (targetRoutes, ajaxRouteNames) => {
     const filterRoutes = []
 
-    ajaxRoutes.forEach(item => {
-      const target = targetRoutes.find(target => target.name === item.name)
-
-      if (target) {
-        const { children: targetChildren, ...rest } = target
-        const route = {
-          ...rest,
+    targetRoutes.forEach(targetRoute => {
+      if (ajaxRouteNames.includes(targetRoute.name)) {
+        filterRoutes.push(targetRoute)
+      } else if (targetRoute.children) {
+        let childRoute = getFilterRoutes(targetRoute.children, ajaxRouteNames)
+        if (childRoute) {
+          let permisstionRoute = { ...targetRoute }
+          permisstionRoute.children = childRoute
+          filterRoutes.push(permisstionRoute)
         }
-
-        if (item.children) {
-          route.children = getFilterRoutes(targetChildren, item.children)
-        }
-
-        filterRoutes.push(route)
       }
     })
 
@@ -77,26 +73,26 @@ export const useMenus = defineStore('menu', () => {
   }
   const generateMenus = async () => {
     // // 方式一：只有固定菜单
-    const menus = getFilterMenus(fixedRoutes)
-    setMenus(menus)
+    // const menus = getFilterMenus(fixedRoutes)
+    // setMenus(menus)
 
     // 方式二：有动态菜单
     // 从后台获取菜单
-    // const { code, data } = await GetMenus()
+    const { code, data } = await GetMenus()
+    if (+code === 200) {
+      // 添加路由之前先删除所有动态路由
+      asyncRoutes.forEach(item => {
+        router.removeRoute(item.name)
+      })
+      // 过滤出需要添加的动态路由
+      let ajaxRouteNames = data.map(ajaxRoute => ajaxRoute.name)
+      const filterRoutes = getFilterRoutes(asyncRoutes, ajaxRouteNames)
+      filterRoutes.forEach(route => router.addRoute(route))
 
-    // if (+code === 200) {
-    //   // 添加路由之前先删除所有动态路由
-    //   asyncRoutes.forEach(item => {
-    //     router.removeRoute(item.name)
-    //   })
-    //   // 过滤出需要添加的动态路由
-    //   const filterRoutes = getFilterRoutes(asyncRoutes, data)
-    //   filterRoutes.forEach(route => router.addRoute(route))
-
-    //   // 生成菜单
-    //   const menus = getFilterMenus([...fixedRoutes, ...filterRoutes])
-    //   setMenus(menus)
-    // }
+      // 生成菜单
+      const menus = getFilterMenus([...fixedRoutes, ...filterRoutes])
+      setMenus(menus)
+    }
   }
   return {
     menus,
