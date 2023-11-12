@@ -30,6 +30,13 @@
       <el-table-column prop="roleCode" label="角色code" width="180" />
       <el-table-column prop="createTime" label="创建时间" />
       <el-table-column label="操作" width="280" #default="scope">
+        <el-button
+          type="warning"
+          size="small"
+          @click="showAssignMenu(scope.row.id)"
+        >
+          分配菜单
+        </el-button>
         <el-button type="primary" size="small" @click="showUpdate(scope.row)">
           修改
         </el-button>
@@ -69,6 +76,29 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+
+  <!-- 分配菜单的对话框 
+// tree组件添加ref属性，后期方便进行tree组件对象的获取
+-->
+  <el-dialog v-model="dialogMenuVisible" title="分配菜单" width="40%">
+    <el-form label-width="80px">
+      <el-tree
+        v-if="dialogMenuVisible"
+        :data="sysMenuTreeList"
+        ref="menuTree"
+        show-checkbox
+        node-key="id"
+        :default-expanded-keys="checkedSysMenuIdList"
+        :default-checked-keys="checkedSysMenuIdList"
+        :check-on-click-node="true"
+        :props="defaultProps"
+      />
+      <el-form-item>
+        <el-button type="primary" @click="doAssign">提交</el-button>
+        <el-button @click="dialogMenuVisible = false">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -79,6 +109,8 @@ import {
   SaveSysRole,
   UpdateSysRole,
   DeleteSysRoleById,
+  GetSysRoleMenuIds,
+  DoAssignMenuIdToSysRole,
 } from '@/api/system/sysRole'
 
 // 分页条总记录数
@@ -101,12 +133,25 @@ const queryDto = ref({ roleName: '' })
 // 控制对话是否展示的变量
 const dialogVisible = ref(false)
 
-let roleForm = ref({
+// 控制设置菜单权限弹窗
+const dialogMenuVisible = ref(false)
+
+//菜单列表
+const defaultProps = {
+  children: 'children',
+  label: 'title',
+}
+const sysMenuTreeList = ref([])
+const checkedSysMenuIdList = ref([])
+
+const roleForm = ref({
   id: undefined,
   roleName: '',
   roleCode: '',
   description: '',
 })
+
+const menuTree = ref()
 
 onMounted(() => {
   fetchData()
@@ -140,6 +185,27 @@ const showAdd = () => {
   dialogVisible.value = true
 }
 
+const showAssignMenu = async roleId => {
+  roleForm.value.id = roleId
+  let { data } = await GetSysRoleMenuIds(roleId)
+  sysMenuTreeList.value = data.allList
+  checkedSysMenuIdList.value = data.checkIdList
+  dialogMenuVisible.value = true
+}
+
+const doAssign = async () => {
+  let checkedNodes = menuTree.value.getCheckedNodes(true)
+  let menuIdList = checkedNodes.map(node => node.id)
+  let { data } = await DoAssignMenuIdToSysRole({
+    roleId: roleForm.value.id,
+    menuIdList,
+  })
+  if (data) {
+    ElMessage.success('操作成功')
+    dialogMenuVisible.value = false
+  }
+}
+
 const showUpdate = row => {
   roleForm.value = row
   dialogVisible.value = true
@@ -166,13 +232,13 @@ const updateRole = async () => {
 }
 
 //删除
-const delteRole = async id => {
+const delteRole = async roleId => {
   ElMessageBox.confirm('此操作将永久删除该记录, 是否继续?', 'Warning', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    let { data } = await DeleteSysRoleById(id)
+    let { data } = await DeleteSysRoleById(roleId)
     if (data) {
       ElMessage.success('操作成功')
       dialogVisible.value = false
