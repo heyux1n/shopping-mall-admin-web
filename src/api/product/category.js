@@ -19,3 +19,10 @@ export const ExportCategoryData = () => {
     responseType: 'blob',
   })
 }
+
+export const GetCategoryPath = id => {
+  return request({
+    url: `${api_name}/path/${id}`,
+    method: 'get',
+  })
+}
