@@ -97,23 +97,7 @@ import {
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 表格数据模型
-const list = ref([
-  {
-    id: 2,
-    createTime: '2023-05-06 12:56:08',
-    specName: '笔记本电脑',
-    specValue: [{ key: '内存', valueList: ['8G', '18G', '32G'] }],
-  },
-  {
-    id: 1,
-    createTime: '2023-05-06 12:40:22',
-    specName: '小米手机',
-    specValue: [
-      { key: '颜色', valueList: ['白色', '红色', '黑色'] },
-      { key: '内存', valueList: ['8G', '18G'] },
-    ],
-  },
-])
+const list = ref([])
 
 // 分页条数据模型
 const total = ref(0)
@@ -132,22 +116,13 @@ const dialogVisible = ref(false)
 const defaultForm = {
   id: '',
   specName: '',
-  specValue: [
-    {
-      key: '颜色',
-      valueList: ['白色', '红色', '黑色'],
-    },
-    {
-      key: '内存',
-      valueList: ['8G', '18G'],
-    },
-  ],
+  specValue: [],
 }
 const productSpec = ref(defaultForm)
 
 //进入修改
 const editShow = row => {
-  productSpec.value = row
+  productSpec.value = JSON.parse(JSON.stringify(row))
   dialogVisible.value = true
 }
 
